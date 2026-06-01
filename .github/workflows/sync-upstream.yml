@@ -1,0 +1,41 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    # 每月 1 号 00:00 UTC 执行 (可根据时区调整)
+    - cron: '0 0 1 * *'
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Sync upstream
+        run: |
+          git remote add upstream https://github.com/jaywcjlove/linux-command.git
+          git fetch upstream master
+          git merge upstream/master --no-edit
+        continue-on-error: true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: 'chore: sync upstream repository'
+          title: 'Sync upstream repository'
+          body: |
+            Automatic sync from upstream repository (jaywcjlove/linux-command)
+            
+            This PR syncs the latest changes from the upstream repository.
+          branch: sync-upstream
+          delete-branch: true
