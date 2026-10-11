@@ -28,7 +28,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote add upstream https://github.com/jaywcjlove/linux-command.git
           git fetch upstream master
-          git merge upstream/master --no-edit
+          git merge upstream/master --no-edit -X theirs
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
